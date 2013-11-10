@@ -101,6 +101,10 @@ def update(request):
         response['data']['data'] += [f.file.oshash for f in files.filter(file__is_audio=True,
                                                                          file__available=False,
                                                                          file__wanted=True)]
+		#uwe added file__is_image=True
+        response['data']['data'] += [f.file.oshash for f in files.filter(file__is_image=True,
+                                                                         file__available=False,
+                                                                         file__wanted=True)]
 
         if filter(lambda l: l['id'] == 'subtitles', settings.CONFIG['layers']):
             response['data']['file'] = [f.file.oshash
@@ -207,7 +211,9 @@ def addMedia(request):
         if len(extension) > 1:
             extension = extension[-1]
         else:
-            extension = 'webm'
+            #wafaa
+            #extension = 'webm'
+            extension = 'png'
         f.selected = True
         if 'info' in data and data['info']:
             f.info = data['info']

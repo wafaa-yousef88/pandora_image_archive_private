@@ -1025,7 +1025,8 @@ class Item(models.Model):
     def update_selected(self):
         sets = self.sets()
         for s in sets:
-            if s.filter(Q(is_video=True)|Q(is_audio=True)).filter(available=False).count() == 0:
+            ''' uwe wafaa --- set is_image to be true as well'''
+            if s.filter(Q(is_video=True)|Q(is_audio=True)|Q(is_image=True)).filter(available=False).count() == 0:
                 update = False
                 self.files.exclude(id__in=s).exclude(part=None).update(part=None)
                 deselect = self.files.filter(selected=True).exclude(id__in=s)

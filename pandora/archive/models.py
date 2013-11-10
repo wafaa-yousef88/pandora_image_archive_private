@@ -23,7 +23,7 @@ import extract
 
 class File(models.Model):
     AV_INFO = (
-        'duration', 'video', 'audio', 'oshash', 'size',
+        'duration', 'video', 'image', 'audio', 'oshash', 'size',
     )
 
     PATH_INFO = (
@@ -83,6 +83,8 @@ class File(models.Model):
 
     is_audio = models.BooleanField(default=False)
     is_video = models.BooleanField(default=False)
+	#uwe added this field & added it to db in archive_volume table
+    is_image = models.BooleanField(default=False)
     is_subtitle = models.BooleanField(default=False)
 
     #upload and data handling
@@ -243,6 +245,7 @@ class File(models.Model):
             self.sort_path = utils.sort_string(self.path)
             self.is_audio = self.type == 'audio'
             self.is_video = self.type == 'video'
+            self.is_image = self.type == 'image'
             self.is_subtitle = self.path.endswith('.srt')
 
         if self.type not in ('audio', 'video'):
@@ -506,8 +509,9 @@ class Stream(models.Model):
 
     file = models.ForeignKey(File, related_name='streams')
     resolution = models.IntegerField(default=96)
-    format = models.CharField(max_length=255, default='webm')
-
+    #wafaa
+    #format = models.CharField(max_length=255, default='webm')
+    format = models.CharField(max_length=255, default='png')
     media = models.FileField(default=None, blank=True, upload_to=lambda f, x: f.path(x))
     source = models.ForeignKey('Stream', related_name='derivatives', default=None, null=True)
     available = models.BooleanField(default=False)
@@ -621,12 +625,21 @@ class Stream(models.Model):
                 del self.info['path']
         self.oshash = self.info.get('oshash')
         self.duration = self.info.get('duration', 0)
-        if 'video' in self.info and self.info['video']:
+        #wafaa
+        '''if 'image' in self.info and self.info['image']:
             if 'display_aspect_ratio' in self.info['video'][0]:
                 dar = map(int, self.info['video'][0]['display_aspect_ratio'].split(':'))
                 self.aspect_ratio = dar[0] / dar[1]
             else:
                 self.aspect_ratio = self.info['video'][0]['width'] / self.info['video'][0]['height']
+        else:
+            self.aspect_ratio = 128/80    '''    
+        if 'image' in self.info and self.info['image']:
+            if 'display_aspect_ratio' in self.info['image'][0]:
+                dar = map(int, self.info['image'][0]['display_aspect_ratio'].split(':'))
+                self.aspect_ratio = dar[0] / dar[1]
+            else:
+                self.aspect_ratio = self.info['image'][0]['width'] / self.info['image'][0]['height']
         else:
             self.aspect_ratio = 128/80
         super(Stream, self).save(*args, **kwargs)

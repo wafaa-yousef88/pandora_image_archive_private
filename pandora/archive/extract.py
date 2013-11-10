@@ -232,10 +232,10 @@ def stream(video, target, profile, info, avconv=None):
 
     if not avconv:
         avconv = AVCONV
+    #wafaa
     cmd = [avconv, '-y', '-i', video, '-threads', '4'] \
           + audio_settings \
           + video_settings
-
     if format == 'webm':
         cmd += ['-f', 'webm', target]
     elif format == 'mp4':
@@ -243,7 +243,6 @@ def stream(video, target, profile, info, avconv=None):
         cmd += ["%s.mp4" % target]
     else:
         cmd += [target]
-
     #print cmd
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
