@@ -1116,7 +1116,7 @@ class Item(models.Model):
         return archive.models.Stream.objects.filter(
             source=None, available=True, file__item=self, file__selected=True
         ).filter(
-            Q(file__is_audio=True)|Q(file__is_video=True)
+            Q(file__is_audio=True)|Q(file__is_video=True)|Q(file__is_image=True)
         ).order_by('file__part', 'file__sort_path')
 
     def update_timeline(self, force=False, async=True):

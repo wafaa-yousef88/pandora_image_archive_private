@@ -34,6 +34,11 @@ from user.models import has_capability
 from ox.django.api import actions
 
 
+#wafaa
+import logging
+logger = logging.getLogger(__name__)
+
+
 def _order_query(qs, sort, prefix='sort__'):
     order_by = []
     if len(sort) == 1:
@@ -834,7 +839,9 @@ def timeline(request, id, size, position=-1, format='jpg', mode=None):
 def download(request, id, index=1):
     item = get_object_or_404(models.Item, itemId=id)
     resolution = max(settings.CONFIG['video']['resolutions'])
-    format = 'webm'
+    #wafaa
+    #format = 'webm'
+    format = 'png'
 
     if not item.access(request.user):
         return HttpResponseForbidden()
@@ -886,6 +893,7 @@ def torrent(request, id, filename=None):
 def video(request, id, resolution, format, index=None):
     resolution = int(resolution)
     resolutions = sorted(settings.CONFIG['video']['resolutions'])
+    #print "im in video (views.py)"
     if resolution not in resolutions:
         raise Http404
     item = get_object_or_404(models.Item, itemId=id)

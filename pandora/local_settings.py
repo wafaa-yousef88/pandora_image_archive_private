@@ -1,4 +1,4 @@
-TABASES = {
+DATABASES = {
 						'default': {
 	          	'NAME': 'pandora',
 	          	'ENGINE': 'django.db.backends.postgresql_psycopg2',

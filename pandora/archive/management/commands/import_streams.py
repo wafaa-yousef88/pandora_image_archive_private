@@ -20,7 +20,9 @@ class Command(BaseCommand):
             for f in files:
                 f = os.path.join(root, f)
                 profile, ext = os.path.splitext(os.path.basename(f))
+                #wafaa
                 if ext in ('.webm', '.mp4'):
+                #if ext in ('.png'):
                     oshash = os.path.dirname(f)[-19:].replace('/', '')
                     format = ext[1:]
                     if profile.endswith('p'):

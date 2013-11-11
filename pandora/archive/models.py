@@ -20,10 +20,13 @@ from person.models import get_name_sort
 
 import extract
 
+#uwe wafaa
+import logging
+logger = logging.getLogger(__name__)
 
 class File(models.Model):
     AV_INFO = (
-        'duration', 'video', 'image', 'audio', 'oshash', 'size',
+        'duration', 'video', 'audio', 'oshash', 'size',
     )
 
     PATH_INFO = (
@@ -112,6 +115,7 @@ class File(models.Model):
                     self.display_aspect_ratio = "%s:%s" % (self.width, self.height)
                 self.is_video = True
                 self.is_audio = False
+                '''
                 if self.path.endswith('.jpg') or \
                    self.path.endswith('.png') or \
                    self.path.endswith('.txt') or \
@@ -119,8 +123,11 @@ class File(models.Model):
                    self.duration == 0.04:
                     self.is_video = False
                     self.video_codec = ''
+                '''
             else:
                 self.is_video = False
+                #wafaa
+                #self.is_image = True
                 self.display_aspect_ratio = "4:3"
                 self.width = 0
                 self.height = 0
@@ -245,6 +252,7 @@ class File(models.Model):
             self.sort_path = utils.sort_string(self.path)
             self.is_audio = self.type == 'audio'
             self.is_video = self.type == 'video'
+			#uwe added following line
             self.is_image = self.type == 'image'
             self.is_subtitle = self.path.endswith('.srt')
 
@@ -552,6 +560,7 @@ class Stream(models.Model):
         return self.file.get_path(name)
 
     def extract_derivatives(self, rebuild=False):
+        logger.error('we are in archive/modesl.py:def extract_derivatives')
         config = settings.CONFIG['video']
         for resolution in sorted(config['resolutions'], reverse=True):
             if resolution <= self.resolution:
@@ -599,7 +608,9 @@ class Stream(models.Model):
             ffmpeg = ox.file.cmd('ffmpeg')
             if ffmpeg == 'ffmpeg':
                 ffmpeg = None
-            ok, error = extract.stream(media, target, self.name(), info, ffmpeg)
+            #wafaa
+            #ok, error = extract.stream(media, target, self.name(), info, ffmpeg)
+            ok, error = extract.stream(media, target, self.name(), info,ffmpeg)
             if ok:
                 self.available = True
             else:
@@ -626,7 +637,7 @@ class Stream(models.Model):
         self.oshash = self.info.get('oshash')
         self.duration = self.info.get('duration', 0)
         #wafaa
-        '''if 'image' in self.info and self.info['image']:
+        '''if 'video' in self.info and self.info['video']:
             if 'display_aspect_ratio' in self.info['video'][0]:
                 dar = map(int, self.info['video'][0]['display_aspect_ratio'].split(':'))
                 self.aspect_ratio = dar[0] / dar[1]

@@ -86,7 +86,9 @@ class Migration(SchemaMigration):
             'cuts': ('ox.django.fields.TupleField', [], {'default': '[]'}),
             'duration': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'file': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'streams'", 'to': "orm['archive.File']"}),
-            'format': ('django.db.models.fields.CharField', [], {'default': "'webm'", 'max_length': '255'}),
+            #wafaa
+            #'format': ('django.db.models.fields.CharField', [], {'default': "'webm'", 'max_length': '255'}),
+            'format': ('django.db.models.fields.CharField', [], {'default': "'png'", 'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'info': ('ox.django.fields.DictField', [], {'default': '{}'}),
             'oshash': ('django.db.models.fields.CharField', [], {'max_length': '16', 'null': 'True', 'db_index': 'True'}),

@@ -21,6 +21,8 @@ from ox.utils import json
 img_extension='jpg'
 
 AVCONV = 'avconv'
+#wafaa
+convert = 'convert'
 
 MAX_DISTANCE = math.sqrt(3 * pow(255, 2))
 
@@ -144,11 +146,12 @@ def stream(video, target, profile, info, avconv=None):
         audiochannels = 1
 
     
-    if info['video'] and 'display_aspect_ratio' in info['video'][0]:
-        fps = AspectRatio(info['video'][0]['framerate'])
+    #if info['video'] and 'display_aspect_ratio' in info['video'][0]:
+    if info['image'] and 'display_aspect_ratio' in info['image'][0]:
+        fps = AspectRatio(info['image'][0]['framerate'])
         fps = min(30, float(fps))
 
-        dar = AspectRatio(info['video'][0]['display_aspect_ratio'])
+        dar = AspectRatio(info['image'][0]['display_aspect_ratio'])
         width = int(dar * height)
         width += width % 2
 
@@ -165,6 +168,8 @@ def stream(video, target, profile, info, avconv=None):
             '-vf', 'hqdn3d,scale=%s:%s'%(width, height),
             '-g', '%d' % int(fps*5),
         ]
+        if format == 'png':
+            print "im png"
         if format == 'webm':
             video_settings += [
                 '-deadline', 'good',
@@ -216,7 +221,7 @@ def stream(video, target, profile, info, avconv=None):
     else:
         video_settings = ['-vn']
 
-    if info['audio']:
+    '''if info['audio']:
         audio_settings = ['-ar', str(audiorate), '-aq', str(audioquality)]
         if audiochannels and 'channels' in info['audio'][0] \
             and info['audio'][0]['channels'] > audiochannels:
@@ -229,10 +234,12 @@ def stream(video, target, profile, info, avconv=None):
             audio_settings += ['-acodec', 'libvorbis']
     else:
         audio_settings = ['-an']
-
+    '''
     if not avconv:
         avconv = AVCONV
     #wafaa
+    cmd = [convert, video, '-resize', 'x96', target]    
+    '''
     cmd = [avconv, '-y', '-i', video, '-threads', '4'] \
           + audio_settings \
           + video_settings
@@ -243,6 +250,7 @@ def stream(video, target, profile, info, avconv=None):
         cmd += ["%s.mp4" % target]
     else:
         cmd += [target]
+    '''
     #print cmd
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
