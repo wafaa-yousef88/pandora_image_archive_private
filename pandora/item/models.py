@@ -1080,7 +1080,9 @@ class Item(models.Model):
             v = streams[0]
             os.symlink(v.media.path, video)
             size = v.media.size
-            duration = v.duration
+            #wafaa
+            #duration = v.duration
+            duration = 0.040000
         else:
             url =  "%s/torrent/" % self.get_absolute_url()
             part = 1
@@ -1090,7 +1092,10 @@ class Item(models.Model):
                 part += 1
                 os.symlink(v.media.path, video)
                 size += v.media.size
-                duration += v.duration
+                #wafaa
+                #duration += v.duration
+                duration = 0.040000
+
             video = base
 
         torrent = '%s.torrent' % base
@@ -1116,6 +1121,8 @@ class Item(models.Model):
         return archive.models.Stream.objects.filter(
             source=None, available=True, file__item=self, file__selected=True
         ).filter(
+            #uwe
+            #Q(file__is_audio=True)|Q(file__is_video=True)
             Q(file__is_audio=True)|Q(file__is_video=True)|Q(file__is_image=True)
         ).order_by('file__part', 'file__sort_path')
 
@@ -1244,7 +1251,10 @@ class Item(models.Model):
         else:
             if 'videoRatio' in self.json:
                 width, height = self.json['resolution']
-                pos = self.sort.duration / 2
+                #wafaa
+                #pos = self.sort.duration / 2
+                duration = 0.040000
+                pos = duration / 2 
                 for p in map(int, [pos/2, pos, pos+pos/2]):
                     path = self.frame(p, height)
                     if path:

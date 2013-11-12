@@ -115,15 +115,15 @@ class File(models.Model):
                     self.display_aspect_ratio = "%s:%s" % (self.width, self.height)
                 self.is_video = True
                 self.is_audio = False
-                '''
                 if self.path.endswith('.jpg') or \
                    self.path.endswith('.png') or \
                    self.path.endswith('.txt') or \
                    self.video_codec == 'ansi' or \
                    self.duration == 0.04:
                     self.is_video = False
+                    #wafaa
+                    self.is_image = True
                     self.video_codec = ''
-                '''
             else:
                 self.is_video = False
                 #wafaa

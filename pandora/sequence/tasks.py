@@ -12,6 +12,8 @@ def get_sequences(itemId):
     i = item.models.Item.objects.get(itemId=itemId)
     models.Sequence.objects.filter(sort=i.sort).delete()
     position = 0
+    #wafaa
+    '''
     for stream in i.streams():
         #data, position = extract.get_sequences(stream.timeline_prefix, position)
         data, position = extract.get_cut_sequences(stream, position)
@@ -37,4 +39,4 @@ def get_sequences(itemId):
             sql = "INSERT INTO sequence_sequence (%s) VALUES %s" % (keys, ', '.join(values));
             cursor.execute(sql)
             transaction.commit_unless_managed()
-
+    '''

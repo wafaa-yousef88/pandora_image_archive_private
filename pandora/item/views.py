@@ -894,6 +894,7 @@ def video(request, id, resolution, format, index=None):
     resolution = int(resolution)
     resolutions = sorted(settings.CONFIG['video']['resolutions'])
     #print "im in video (views.py)"
+    logger.error("I AM IN VIDEO")
     if resolution not in resolutions:
         raise Http404
     item = get_object_or_404(models.Item, itemId=id)
@@ -904,6 +905,8 @@ def video(request, id, resolution, format, index=None):
     else:
         index = 0
     streams = item.streams()
+    print "%s" % streams
+    logger.error(streams)
     if index + 1 > streams.count():
         raise Http404
     stream = streams[index].get(resolution, format)
