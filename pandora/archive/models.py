@@ -600,6 +600,7 @@ class Stream(models.Model):
                 self.file.save()
             self.save()
         elif self.file.data:
+            print "2nd cond";
             media = self.file.data.path
             if not self.media:
                 self.media.name = self.path(self.name())

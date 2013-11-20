@@ -168,8 +168,8 @@ def stream(video, target, profile, info, avconv=None):
             '-vf', 'hqdn3d,scale=%s:%s'%(width, height),
             '-g', '%d' % int(fps*5),
         ]
-        if format == 'png':
-            print "im png"
+        #if format == 'png':
+            #print "im png"
         if format == 'webm':
             video_settings += [
                 '-deadline', 'good',
@@ -238,7 +238,7 @@ def stream(video, target, profile, info, avconv=None):
     if not avconv:
         avconv = AVCONV
     #wafaa
-    cmd = [convert, video, '-resize', 'x96', target]    
+    cmd = [convert, video, '-resize', 'x240', target]    
     '''
     cmd = [avconv, '-y', '-i', video, '-threads', '4'] \
           + audio_settings \
@@ -301,7 +301,8 @@ def frame(video, frame, position, height=128, redo=False):
         folder = os.path.dirname(frame)
         if redo or not exists(frame):
             ox.makedirs(folder)
-            if video.endswith('.mp4'):
+            #if video.endswith('.mp4'):
+            '''if video.endswith('.mp4'):
                 cmd = [
                     AVCONV, '-y',
                     '-ss', str(position),
@@ -311,10 +312,13 @@ def frame(video, frame, position, height=128, redo=False):
                 ]
                 if not frame.endswith('.png'):
                     cmd += ['-f', 'mjpeg']
-                cmd += [frame]
-            else:
+                cmd += [frame]'''
+            #wafaa
+            if video.endswith('.png'):
+                cmd = [convert, video, '-thumbnail', 'x128', frame]
+            '''else:
                 cmd = ['oxframe', '-i', video, '-o', frame,
-                    '-p', str(position), '-y', str(height)]
+                    '-p', str(position), '-y', str(height)]'''
             run_command(cmd)
 
 

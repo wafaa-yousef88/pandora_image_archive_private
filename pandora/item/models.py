@@ -1074,9 +1074,13 @@ class Item(models.Model):
         size = 0
         duration = 0.0
         if streams.count() == 1:
-            url =  "%s/torrent/%s.webm" % (self.get_absolute_url(),
+            #wafaa
+            #url =  "%s/torrent/%s.webm" % (self.get_absolute_url(),
+            url =  "%s/torrent/%s.png" % (self.get_absolute_url(),
                                            quote(filename.encode('utf-8')))
-            video = "%s.webm" % base
+            #wafaa
+            #video = "%s.webm" % base
+            video = "%s.png" % base
             v = streams[0]
             os.symlink(v.media.path, video)
             size = v.media.size
@@ -1088,7 +1092,9 @@ class Item(models.Model):
             part = 1
             os.makedirs(base)
             for v in streams:
-                video = "%s/%s.Part %d.webm" % (base, filename, part)
+                #wafaa
+                #video = "%s/%s.Part %d.webm" % (base, filename, part)
+                video = "%s/%s.Part %d.png" % (base, filename, part)
                 part += 1
                 os.symlink(v.media.path, video)
                 size += v.media.size
@@ -1239,7 +1245,9 @@ class Item(models.Model):
         frames = []
         if settings.CONFIG['media']['importFrames']:
             offset = 0
-            for f in self.files.filter(selected=True, is_video=True).order_by('sort_path'):
+            #wafaa
+            #for f in self.files.filter(selected=True, is_video=True).order_by('sort_path'):
+            for f in self.files.filter(selected=True, is_video=True, is_image=True).order_by('sort_path'):
                 for ff in f.frames.all().order_by('position'):
                     frames.append({
                         'position': offset + ff.position,
