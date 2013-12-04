@@ -597,7 +597,9 @@
             "find": {"conditions": [], "operator": "&"},
             "followPlayer": true,
             "help": "",
-            "icons": "posters",
+						//wafaa commented
+            //"icons": "posters",
+            "icons": "icons",
             "infoIconSize": 256,
             "item": "",
             "itemFind": "",
@@ -676,13 +678,17 @@
             "videoScale": "fit",
             "videoSize": "small",
             "videoTimeline": "antialias",
-            "videoView": "player",
+						"videoView": "player",
             "videoVolume": 1
         },
         "username": "",
         "volumes": []
     },
     "userLevels": ["guest", "member", "staff", "admin"],
+    /* wafaa - uwe added image section */
+    "image": {
+	"formats": ["png"]
+	},
     "video": {
         "torrent": true,
         //supported formats: webm, mp4
@@ -691,6 +697,6 @@
         "previewRatio": 1.3333333333,
         //supported resolutions are
         //1080, 720, 480, 432, 360, 288, 240, 144, 96
-        "resolutions": [480,240]
+        "resolutions": [720, 480, 240]
     }
 }

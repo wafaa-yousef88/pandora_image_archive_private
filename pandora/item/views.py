@@ -893,7 +893,7 @@ def torrent(request, id, filename=None):
 def video(request, id, resolution, format, index=None):
     resolution = int(resolution)
     resolutions = sorted(settings.CONFIG['video']['resolutions'])
-    #print "im in video (views.py)"
+    #wafaa
     logger.error("I AM IN VIDEO")
     if resolution not in resolutions:
         raise Http404
@@ -905,6 +905,7 @@ def video(request, id, resolution, format, index=None):
     else:
         index = 0
     streams = item.streams()
+    #wafaa
     print "%s" % streams
     logger.error(streams)
     if index + 1 > streams.count():

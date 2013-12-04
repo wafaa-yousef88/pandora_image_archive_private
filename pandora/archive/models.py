@@ -347,10 +347,14 @@ class File(models.Model):
 
     def json(self, keys=None, user=None):
         resolution = (self.width, self.height)
-        if resolution == (0, 0) or self.type != 'video':
+        #wafaa
+        #if resolution == (0, 0) or self.type != 'video':
+        if resolution == (0, 0) or self.type != 'video' or  self.type != 'image':
             resolution = None
         duration = self.duration
-        if self.type != 'video':
+        #wafaa
+        #if self.type != 'video':
+        if self.type != 'video' or  self.type != 'image':
             duration = None
         state = ''
         error = ''
@@ -560,7 +564,7 @@ class Stream(models.Model):
         return self.file.get_path(name)
 
     def extract_derivatives(self, rebuild=False):
-        logger.error('we are in archive/modesl.py:def extract_derivatives')
+        #logger.error('we are in archive/modesl.py:def extract_derivatives')
         config = settings.CONFIG['video']
         for resolution in sorted(config['resolutions'], reverse=True):
             if resolution <= self.resolution:

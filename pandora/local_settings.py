@@ -17,7 +17,7 @@ SITE_CONFIG = '/srv/pandora/pandora/pandora_image.jsonc'
 DATA_SERVICE = 'http://localhost/api/'
 #VIDEO_PREFIX = "//video{uid}.pad.ma"
 #VIDEO_PREFIX = "//localhost"
-VIDEO_PREFIX = "//localhost"
+VIDEO_PREFIX = "//192.168.99.112"
 #VIDEO_PREFIX = "//video{uid}.127.0.0.1"
 #Commented the following line cuz admin user is not allowed to access anything even when he is logged in
 #SESSION_COOKIE_DOMAIN = ".pad.ma"
