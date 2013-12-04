@@ -238,7 +238,9 @@ def stream(video, target, profile, info, avconv=None):
     if not avconv:
         avconv = AVCONV
     #wafaa
-    cmd = [convert, video, '-resize', 'x240', target]    
+    x = 'x'
+    res_val = x + str(height)
+    cmd = [convert, video, '-resize', res_val, target]    
     '''
     cmd = [avconv, '-y', '-i', video, '-threads', '4'] \
           + audio_settings \
@@ -301,7 +303,7 @@ def frame(video, frame, position, height=128, redo=False):
         folder = os.path.dirname(frame)
         if redo or not exists(frame):
             ox.makedirs(folder)
-            #if video.endswith('.mp4'):
+            #wafaa commented
             '''if video.endswith('.mp4'):
                 cmd = [
                     AVCONV, '-y',
