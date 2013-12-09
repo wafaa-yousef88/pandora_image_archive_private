@@ -31,6 +31,7 @@ To run pan.do/ra you need to install and setup:
             postgresql postgresql-contrib rabbitmq-server \
             ffmpeg2theora libav-tools libavcodec-extra-53 \
             python-ox oxframe imagemagick
+						ufraw-batch
 
 
 * Prepare Environment
