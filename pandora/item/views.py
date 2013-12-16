@@ -1108,9 +1108,12 @@ def atom_xml(request):
 
 def oembed(request):
     format = request.GET.get('format', 'json')
-    maxwidth = int(request.GET.get('maxwidth', 640))
-    maxheight = int(request.GET.get('maxheight', 480))
-
+    #maxwidth = int(request.GET.get('maxwidth', 640))
+    maxwidth = int(request.GET.get('maxwidth', 2000))
+    #wafaa
+    #maxheight = int(request.GET.get('maxheight', 480))
+    maxheight = int(request.GET.get('maxheight', 1080))
+    
     url = request.GET['url']
     parts = urlparse(url).path.split('/')
     itemId = parts[1]

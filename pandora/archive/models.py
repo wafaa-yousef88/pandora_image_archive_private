@@ -109,6 +109,7 @@ class File(models.Model):
                 self.width = video['width']
                 self.height = video['height']
                 self.framerate = video['framerate']
+                #wafaa
                 if 'display_aspect_ratio' in video:
                     self.display_aspect_ratio = video['display_aspect_ratio']
                 else:
@@ -128,7 +129,9 @@ class File(models.Model):
                 self.is_video = False
                 #wafaa
                 #self.is_image = True
+                #wafaa removed 4 now
                 self.display_aspect_ratio = "4:3"
+                #self.display_aspect_ratio = "16:9"
                 self.width = 0
                 self.height = 0
             if 'audio' in self.info and self.info['audio'] and self.duration > 0:
@@ -255,8 +258,9 @@ class File(models.Model):
 			#uwe added following line
             self.is_image = self.type == 'image'
             self.is_subtitle = self.path.endswith('.srt')
-
-        if self.type not in ('audio', 'video'):
+        #wafaa
+        #if self.type not in ('audio', 'video'):
+        if self.type not in ('audio', 'video', 'image'):
             self.duration = None
         else:
             duration = sum([s.info.get('duration', 0)
@@ -530,6 +534,7 @@ class Stream(models.Model):
     oshash = models.CharField(max_length=16, null=True, db_index=True)
     info = fields.DictField(default={})
     duration = models.FloatField(default=0)
+    #wafaa
     aspect_ratio = models.FloatField(default=0)
 
     cuts = fields.TupleField(default=[])
@@ -650,6 +655,7 @@ class Stream(models.Model):
                 self.aspect_ratio = self.info['video'][0]['width'] / self.info['video'][0]['height']
         else:
             self.aspect_ratio = 128/80    '''    
+        #wafaa
         if 'image' in self.info and self.info['image']:
             if 'display_aspect_ratio' in self.info['image'][0]:
                 dar = map(int, self.info['image'][0]['display_aspect_ratio'].split(':'))
@@ -665,6 +671,7 @@ class Stream(models.Model):
     def json(self):
         return {
             'duration': self.duration,
+            #wafaa
             'aspectratio': self.aspect_ratio,
         }
 

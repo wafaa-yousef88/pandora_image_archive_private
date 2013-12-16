@@ -14,10 +14,10 @@ BROKER_VHOST = "/pandora"
 SITE_CONFIG = '/srv/pandora/pandora/pandora_image.jsonc'
 #SITE_CONFIG = join(PROJECT_ROOT, 'pandora_image.jsonc')
 #DATA_SERVICE = 'https://data.0xdb.org/api/'
-DATA_SERVICE = 'http://localhost/api/'
+DATA_SERVICE = 'http://127.0.0.1/api/'
 #VIDEO_PREFIX = "//video{uid}.pad.ma"
-#VIDEO_PREFIX = "//localhost"
-VIDEO_PREFIX = "//192.168.99.112"
+VIDEO_PREFIX = "//127.0.0.1"
+#VIDEO_PREFIX = "//192.168.99.112"
 #VIDEO_PREFIX = "//video{uid}.127.0.0.1"
 #Commented the following line cuz admin user is not allowed to access anything even when he is logged in
 #SESSION_COOKIE_DOMAIN = ".pad.ma"
@@ -25,6 +25,7 @@ VIDEO_PREFIX = "//192.168.99.112"
 #SESSION_COOKIE_DOMAIN = ".localhost"
 
 DEBUG = False
+#DEBUG = True
 TEMPLATE_DEBUG = True
 	
 #with apache x-sendfile or lighttpd set this to True

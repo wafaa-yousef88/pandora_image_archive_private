@@ -145,103 +145,14 @@ def stream(video, target, profile, info, avconv=None):
         audiobitrate = '22k'
         audiochannels = 1
 
-    
-    #if info['video'] and 'display_aspect_ratio' in info['video'][0]:
-    if info['image'] and 'display_aspect_ratio' in info['image'][0]:
-        fps = AspectRatio(info['image'][0]['framerate'])
-        fps = min(30, float(fps))
-
-        dar = AspectRatio(info['image'][0]['display_aspect_ratio'])
-        width = int(dar * height)
-        width += width % 2
-
-        bitrate = height*width*fps*bpp/1000
-        aspect = dar.ratio
-        #use 1:1 pixel aspect ratio if dar is close to that
-        if abs(width/height - dar) < 0.02:
-            aspect = '%s:%s' % (width, height)
-
-        video_settings = [
-            '-vb', '%dk'%bitrate,
-            '-aspect', aspect,
-            #'-vf', 'yadif',
-            '-vf', 'hqdn3d,scale=%s:%s'%(width, height),
-            '-g', '%d' % int(fps*5),
-        ]
-        #if format == 'png':
-            #print "im png"
-        if format == 'webm':
-            video_settings += [
-                '-deadline', 'good',
-                '-cpu-used', '0',
-                '-lag-in-frames', '16',
-                '-auto-alt-ref', '1',
-            ]
-        if format == 'mp4':
-            #quicktime does not support bpyramid
-            '''
-            video_settings += [
-                '-vcodec', 'libx264',
-                '-flags', '+loop+mv4',
-                '-cmp', '256',
-                '-partitions', '+parti4x4+parti8x8+partp4x4+partp8x8+partb8x8',
-                '-me_method', 'hex',
-                '-subq', '7',
-                '-trellis', '1',
-                '-refs', '5',
-                '-bf', '3',
-                '-flags2', '+bpyramid+wpred+mixed_refs+dct8x8',
-                '-coder', '1',
-                '-me_range', '16',
-                '-keyint_min', '25', #FIXME: should this be related to fps?
-                '-sc_threshold','40',
-                '-i_qfactor', '0.71',
-                '-qmin', '10', '-qmax', '51',
-                '-qdiff', '4'
-            ]
-            '''
-            video_settings += [
-                '-vcodec', 'libx264',
-                '-flags', '+loop+mv4',
-                '-cmp', '256',
-                '-partitions', '+parti4x4+parti8x8+partp4x4+partp8x8+partb8x8',
-                '-me_method', 'hex',
-                '-subq', '7',
-                '-trellis', '1',
-                '-refs', '5',
-                '-bf', '0',
-                '-flags2', '+mixed_refs',
-                '-coder', '0',
-                '-me_range', '16',
-                '-sc_threshold', '40',
-                '-i_qfactor', '0.71',
-                '-qmin', '10', '-qmax', '51',
-                '-qdiff', '4'
-            ]
-    else:
-        video_settings = ['-vn']
-
-    '''if info['audio']:
-        audio_settings = ['-ar', str(audiorate), '-aq', str(audioquality)]
-        if audiochannels and 'channels' in info['audio'][0] \
-            and info['audio'][0]['channels'] > audiochannels:
-            audio_settings += ['-ac', str(audiochannels)]
-        if audiobitrate:
-            audio_settings += ['-ab', audiobitrate]
-        if format == 'mp4':
-            audio_settings += ['-acodec', 'libvo_aacenc']
-        else:
-            audio_settings += ['-acodec', 'libvorbis']
-    else:
-        audio_settings = ['-an']
-    '''
-    if not avconv:
-        avconv = AVCONV
     #wafaa
     x = 'x'
     res_val = x + str(height)
     cmd = [convert, video, '-resize', res_val, target]    
+    #cmd = [convert, video, target]    
     '''
+    if not avconv:
+        avconv = AVCONV
     cmd = [avconv, '-y', '-i', video, '-threads', '4'] \
           + audio_settings \
           + video_settings
@@ -314,13 +225,17 @@ def frame(video, frame, position, height=128, redo=False):
                 ]
                 if not frame.endswith('.png'):
                     cmd += ['-f', 'mjpeg']
-                cmd += [frame]'''
+                cmd += [frame]
+            else:
+                cmd = ['oxframe', '-i', video, '-o', frame,
+                    '-p', str(position), '-y', str(height)]
+			'''
             #wafaa
             if video.endswith('.png'):
+                #wafaa
+                #x = 'x'
+                #frame_height = x + str(height)
                 cmd = [convert, video, '-thumbnail', 'x128', frame]
-            '''else:
-                cmd = ['oxframe', '-i', video, '-o', frame,
-                    '-p', str(position), '-y', str(height)]'''
             run_command(cmd)
 
 
