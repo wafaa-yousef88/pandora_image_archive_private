@@ -12,3 +12,7 @@ ALTER TABLE archive_file ALTER COLUMN display_aspect_ratio DROP NOT NULL;
  ALTER TABLE clip_clip ALTER COLUMN aspect_ratio DROP NOT NULL;
  ALTER TABLE archive_stream ALTER COLUMN aspect_ratio DROP NOT NULL;
 ALTER TABLE clip_clip ALTER COLUMN aspect_ratio DROP NOT NULL;
+
+/*Adding Field to title table to hold collection value for future usage*/
+alter table title_title  add COLUMN collection character varying(1000);
+alter table title_title   ALTER   COLUMN collection set   NOT NULL;

@@ -7,6 +7,8 @@ import unicodedata
 from django.db import models
 
 import ox
+#wafaa
+import os
 
 from item import utils
 
@@ -27,6 +29,8 @@ def get_title_sort(title):
 
 class Title(models.Model):
     title = models.CharField(max_length=1000, unique=True)
+    #wafaa
+    collection = models.CharField(max_length=1000, unique=True)
     sorttitle = models.CharField(max_length=1000)
     sortsorttitle = models.CharField(max_length=1000)
     edited = models.BooleanField(default=False)
@@ -41,6 +45,8 @@ class Title(models.Model):
     def save(self, *args, **kwargs):
         if not self.sorttitle:
             self.sorttitle = ox.get_sort_title(self.title)
+            #wafaa
+            self.collection = os.path.dirname(self.title)
             self.sorttitle = unicodedata.normalize('NFKD', self.sorttitle)
         self.sortsorttitle = utils.sort_title(self.sorttitle)
         super(Title, self).save(*args, **kwargs)
