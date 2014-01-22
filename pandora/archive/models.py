@@ -224,14 +224,16 @@ class File(models.Model):
             for name, sortname in zip(info['director'], info['directorSort']):
                 get_name_sort(name, sortname)
         #add all files in one folder to same item
-        if self.instances.all().count():
+        #uwe I think this should be moved to client side not server side
+        '''if self.instances.all().count():
             if info.get('isEpisode'):
                 prefix = os.path.splitext(self.instances.all()[0].path)[0]
             else:
                 prefix = os.path.dirname(self.instances.all()[0].path) + '/'
             qs = item.models.Item.objects.filter(files__instances__path__startswith=prefix)
+            # wafaa and uwe think line should be disabled, above as well maybe ?
             if qs.exists():
-                self.item = qs[0]
+                self.item = qs[0]'''
         if not self.item:
             self.item = item.models.get_item(info, user)
         for key in self.AV_INFO + self.PATH_INFO:
