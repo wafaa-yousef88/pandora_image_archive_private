@@ -15,8 +15,10 @@ import Image
 import ox
 
 from item.models import Item
+from archive.extract import resize_image
 
 import managers
+import utils
 
 
 class Document(models.Model):
@@ -33,6 +35,9 @@ class Document(models.Model):
     size = models.IntegerField(default=0)
     matches = models.IntegerField(default=0)
     ratio = models.FloatField(default=1)
+    pages = models.IntegerField(default=-1)
+    width = models.IntegerField(default=-1)
+    height = models.IntegerField(default=-1)
     description = models.TextField(default="")
     oshash = models.CharField(max_length=16, unique=True, null=True)
 
@@ -52,11 +57,13 @@ class Document(models.Model):
                 self.size = self.file.size
                 if self.extension == 'pdf' and not os.path.exists(self.thumbnail()):
                     self.make_thumbnail()
+                self.get_info()
 
         self.name_sort = ox.sort_string(self.name or u'')[:255].lower()
         self.description_sort = ox.sort_string(self.description or u'')[:512].lower()
 
         super(Document, self).save(*args, **kwargs)
+        self.update_matches()
 
     def __unicode__(self):
         return self.get_id()
@@ -66,30 +73,20 @@ class Document(models.Model):
         if created:
             p.index = ItemProperties.objects.filter(item=item).aggregate(Max('index'))['index__max'] + 1
             p.save()
+            p.document.update_matches()
 
     def remove(self, item):
         ItemProperties.objects.filter(item=item, document=self).delete()
 
     @classmethod
     def get(cls, id):
-        username, name, extension = cls.parse_id(id)
-        return cls.objects.get(user__username=username, name=name, extension=extension)
-
-    @classmethod
-    def parse_id(cls, id):
-        public_id = id.split(':')
-        username = public_id[0]
-        name = ":".join(public_id[1:])
-        extension = name.split('.')
-        name = '.'.join(extension[:-1])
-        extension = extension[-1].lower()
-        return username, name, extension
+        return cls.objects.get(pk=ox.fromAZ(id))
 
     def get_absolute_url(self):
         return ('/documents/%s' % quote(self.get_id())).replace('%3A', ':')
 
     def get_id(self):
-        return u'%s:%s.%s' % (self.user.username, self.name, self.extension)
+        return ox.toAZ(self.id)
 
     def editable(self, user):
         if not user or user.is_anonymous():
@@ -120,9 +117,13 @@ class Document(models.Model):
                 p.description = ox.sanitize_html(data['description'])
                 p.save()
 
+    @property
+    def resolution(self):
+        return [self.width, self.height]
+
     def json(self, keys=None, user=None, item=None):
         if not keys:
-             keys=[
+            keys=[
                 'description',
                 'editable',
                 'id',
@@ -133,6 +134,10 @@ class Document(models.Model):
                 'ratio',
                 'user'
             ]
+            if self.extension == 'pdf':
+                keys.append('pages')
+            else:
+                keys.append('resolution')
         response = {}
         _map = {
         }
@@ -154,7 +159,8 @@ class Document(models.Model):
         return response
 
     def path(self, name=''):
-        h = "%07d" % self.id
+        h = ox.toAZ(self.id)
+        h = (7-len(h))*'0' + h
         return os.path.join('documents', h[:2], h[2:4], h[4:6], h[6:], name)
 
     def save_chunk(self, chunk, chunk_id=-1, done=False):
@@ -171,22 +177,49 @@ class Document(models.Model):
                     f.write(chunk.read())
             if done:
                 self.uploading = False
+                self.get_info()
                 self.get_ratio()
                 self.oshash = ox.oshash(self.file.path)
                 self.save()
             return True
         return False
 
-    def thumbnail(self):
-        return '%s.jpg' % self.file.path
+    def thumbnail(self, size=None):
+        src = self.file.path
+        if self.extension == 'pdf':
+            src = '%s.jpg' % src
+        if size:
+            size = int(size)
+            path = src.replace('.jpg', '.%d.jpg'%size)
+        else:
+            path = src
+        if os.path.exists(src) and not os.path.exists(path):
+            image_size = max(self.width, self.height)
+            if image_size == -1:
+                image_size = max(*Image.open(src).size)
+            if size > image_size:
+                path = src
+            else:
+                resize_image(src, path, size=size)
+        return path
 
     def make_thumbnail(self, force=False):
         thumb = self.thumbnail()
         if not os.path.exists(thumb) or force:
             cmd = ['convert', '%s[0]' % self.file.path,
-                '-background', 'white', '-flatten', '-resize', '256x256', thumb]
+                '-background', 'white', '-flatten', '-resize', '1024x1024', thumb]
             p = subprocess.Popen(cmd)
             p.wait()
+
+    def get_info(self):
+        if self.extension == 'pdf':
+            if self.pages == -1:
+                self.width = 1
+                self.height = -1
+                self.pages = utils.pdfpages(self.file.path)
+        elif self.width == -1:
+            self.pages = -1
+            self.width, self.height = Image.open(self.file.path).size
 
     def get_ratio(self):
         if self.extension == 'pdf':
@@ -194,10 +227,13 @@ class Document(models.Model):
             image = self.thumbnail()
         else:
             image = self.file.path
-        try:
-            size = Image.open(image).size
-        except:
-            size = [1,1]
+        if self.width > 0:
+            size = self.resolution
+        else:
+            try:
+                size = Image.open(image).size
+            except:
+                size = [1,1]
         self.ratio = size[0] / size[1]
 
     def update_matches(self):
@@ -208,7 +244,7 @@ class Document(models.Model):
         url = unquote(urls[0])
         if url != urls[0]:
             urls.append(url)
-        matches = 0
+        matches = self.items.count()
         for url in urls:
             matches += annotation.models.Annotation.objects.filter(value__contains=url).count()
             matches += item.models.Item.objects.filter(data__contains=url).count()

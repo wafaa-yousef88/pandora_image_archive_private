@@ -20,10 +20,6 @@ from person.models import get_name_sort
 
 import extract
 
-#uwe wafaa
-import logging
-logger = logging.getLogger(__name__)
-
 class File(models.Model):
     AV_INFO = (
         'duration', 'video', 'audio', 'oshash', 'size',
@@ -109,7 +105,6 @@ class File(models.Model):
                 self.width = video['width']
                 self.height = video['height']
                 self.framerate = video['framerate']
-                #wafaa
                 if 'display_aspect_ratio' in video:
                     self.display_aspect_ratio = video['display_aspect_ratio']
                 else:
@@ -127,11 +122,7 @@ class File(models.Model):
                     self.video_codec = ''
             else:
                 self.is_video = False
-                #wafaa
-                #self.is_image = True
-                #wafaa removed 4 now
                 self.display_aspect_ratio = "4:3"
-                #self.display_aspect_ratio = "16:9"
                 self.width = 0
                 self.height = 0
             if 'audio' in self.info and self.info['audio'] and self.duration > 0:
@@ -150,7 +141,6 @@ class File(models.Model):
 
             if self.framerate:
                 self.pixels = int(self.width * self.height * float(utils.parse_decimal(self.framerate)) * self.duration)
-
 
     def get_path_info(self):
         data = {}
@@ -409,7 +399,15 @@ class File(models.Model):
 
     def all_paths(self):
         return [self.path] + [i.path for i in self.instances.all()]
+
+    def extract_stream(self):
+        import tasks
+        return tasks.extract_stream.delay(self.id)
     
+    def process_stream(self):
+        import tasks
+        return tasks.process_stream.delay(self.id)
+
     def delete(self, *args, **kwargs):
         self.delete_files()
         super(File, self).delete(*args, **kwargs)
@@ -536,7 +534,6 @@ class Stream(models.Model):
     oshash = models.CharField(max_length=16, null=True, db_index=True)
     info = fields.DictField(default={})
     duration = models.FloatField(default=0)
-    #wafaa
     aspect_ratio = models.FloatField(default=0)
 
     cuts = fields.TupleField(default=[])
@@ -571,7 +568,6 @@ class Stream(models.Model):
         return self.file.get_path(name)
 
     def extract_derivatives(self, rebuild=False):
-        #logger.error('we are in archive/modesl.py:def extract_derivatives')
         config = settings.CONFIG['video']
         for resolution in sorted(config['resolutions'], reverse=True):
             if resolution <= self.resolution:
@@ -611,7 +607,6 @@ class Stream(models.Model):
                 self.file.save()
             self.save()
         elif self.file.data:
-            print "2nd cond";
             media = self.file.data.path
             if not self.media:
                 self.media.name = self.path(self.name())
@@ -620,9 +615,7 @@ class Stream(models.Model):
             ffmpeg = ox.file.cmd('ffmpeg')
             if ffmpeg == 'ffmpeg':
                 ffmpeg = None
-            #wafaa
-            #ok, error = extract.stream(media, target, self.name(), info, ffmpeg)
-            ok, error = extract.stream(media, target, self.name(), info,ffmpeg)
+            ok, error = extract.stream(media, target, self.name(), info, ffmpeg)
             if ok:
                 self.available = True
             else:
@@ -673,7 +666,6 @@ class Stream(models.Model):
     def json(self):
         return {
             'duration': self.duration,
-            #wafaa
             'aspectratio': self.aspect_ratio,
         }
 

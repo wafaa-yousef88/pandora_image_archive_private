@@ -14,8 +14,7 @@ from item.models import Item
 import models
 
 def get_document_or_404_json(id):
-    username, name, extension = models.Document.parse_id(id)
-    return get_object_or_404_json(models.Document, user__username=username, name=name, extension=extension)
+    return models.Document.get(id)
 
 @login_required_json
 def addDocument(request):
@@ -42,7 +41,7 @@ def addDocument(request):
             document = models.Document.get(id)
             document.add(item)
     else:
-        response = json_response(status=403, file='permission denied')
+        response = json_response(status=403, text='permission denied')
     return render_to_json_response(response)
 actions.register(addDocument, cache=False)
 
@@ -87,8 +86,12 @@ def _order_query(qs, sort):
             'name': 'name_sort',
             'description': 'description_sort',
         }.get(e['key'], e['key'])
-        order = '%s%s' % (operator, key)
-        order_by.append(order)
+        if key == 'resolution':
+            order_by.append('%swidth'%operator)
+            order_by.append('%sheight'%operator)
+        else:
+            order = '%s%s' % (operator, key)
+            order_by.append(order)
     if order_by:
         qs = qs.order_by(*order_by)
     qs = qs.distinct()
@@ -221,13 +224,14 @@ def sortDocuments(request):
     return render_to_json_response(response)
 actions.register(sortDocuments, cache=False)
 
-def file(request, id):
+def file(request, id, name=None):
     document = models.Document.get(id)
     return HttpFileResponse(document.file.path)
 
-def thumbnail(request, id):
+def thumbnail(request, id, size=256):
+    size = int(size)
     document = models.Document.get(id)
-    return HttpFileResponse(document.thumbnail())
+    return HttpFileResponse(document.thumbnail(size))
 
 class ChunkForm(forms.Form):
     chunk = forms.FileField()
@@ -250,6 +254,7 @@ def upload(request):
             chunk_id = form.cleaned_data['chunkId']
             response = {
                 'result': 1,
+                'id': file.get_id(),
                 'resultUrl': request.build_absolute_uri(file.get_absolute_url())
             }
             if not file.save_chunk(c, chunk_id, form.cleaned_data['done']):

@@ -176,7 +176,6 @@ class Item(models.Model):
     stream_info = fields.DictField(default={}, editable=False)
 
     #stream related fields
-    #wafaa
     stream_aspect = models.FloatField(default=4/3)
 
     objects = managers.ItemManager()
@@ -570,7 +569,6 @@ class Item(models.Model):
             ).aggregate(Sum('duration'))['duration__sum'] 
         i['parts'] = len(i['durations'])
         if i['parts']:
-            #wafaa
             i['videoRatio'] = streams[0].aspect_ratio
             i['resolution'] = (streams[0].file.width, streams[0].file.height)
 
@@ -750,6 +748,7 @@ class Item(models.Model):
             'modified',
             'numberofannotations',
             'numberofcuts',
+            'numberofdocuments',
             'numberoffiles',
             'parts',
             'pixels',
@@ -826,7 +825,6 @@ class Item(models.Model):
         s.created = self.created or datetime.now()
         s.rightslevel = self.level
 
-        #wafaa
         s.aspectratio = self.get('aspectratio')
         if self.id:
             s.words = sum([len(a.value.split()) for a in self.annotations.exclude(value='')])
@@ -848,7 +846,6 @@ class Item(models.Model):
                 s.resolution = v.width * v.height
                 s.width = v.width
                 s.height = v.height
-            #wafaa
             if not s.aspectratio and v.display_aspect_ratio:
                 s.aspectratio = float(utils.parse_decimal(v.display_aspect_ratio))
             s.pixels = sum([v.pixels for v in videos])
@@ -873,8 +870,9 @@ class Item(models.Model):
         for key in ('hue', 'saturation', 'lightness'):
             if key in self.data:
                 setattr(s, key, self.data.get(key, None))
-        s.numberofannotations = self.annotations.all().count()
+        s.numberofannotations = self.annotations.count()
         s.numberofcuts = len(self.data.get('cuts', []))
+        s.numberofdocuments = self.documents.count()
         if s.duration:
             s.cutsperminute = s.numberofcuts / (s.duration/60)
             s.wordsperminute = s.words / (s.duration / 60)

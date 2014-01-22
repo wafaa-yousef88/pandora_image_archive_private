@@ -46,11 +46,12 @@ apt-get install -y \
     libav-tools \
     ffmpeg2theora \
     imagemagick \
+    poppler-utils \
     ipython \
     postfix \
     postgresql \
-    postgresql-contrib
-
+    postgresql-contrib \
+	ufraw-batch
 sudo -u postgres createuser -S -D -R pandora
 sudo -u postgres createdb  -T template0 --locale=C --encoding=UTF8 -O pandora pandora
 echo "CREATE EXTENSION pg_trgm;" | sudo -u postgres psql pandora

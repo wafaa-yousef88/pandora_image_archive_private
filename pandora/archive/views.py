@@ -253,7 +253,7 @@ def firefogg_upload(request):
                     f.save()
                     #FIXME: this fails badly if rabbitmq goes down
                     try:
-                        t = tasks.process_stream.delay(f.id)
+                        t = f.process_stream()
                         response['resultUrl'] = t.task_id
                     except:
                         pass
@@ -272,7 +272,7 @@ def firefogg_upload(request):
                 if f.item.rendered and f.selected:
                     Item.objects.filter(id=f.item.id).update(rendered=False)
                 response = {
-                    'uploadUrl': request.build_absolute_uri('/api/upload/?id=%s&profile=%s' % (f.oshash, profile)),
+                    'uploadUrl': '/api/upload/?id=%s&profile=%s' % (f.oshash, profile),
                     'url': request.build_absolute_uri('/%s' % f.item.itemId),
                     'result': 1
                 }
@@ -306,7 +306,7 @@ def direct_upload(request):
                 file.save()
                 #try/execpt so it does not fail if rabitmq is down
                 try:
-                    t = tasks.extract_stream.delay(file.id)
+                    t = file.extract_stream()
                     response['resultUrl'] = t.task_id
                 except:
                     pass

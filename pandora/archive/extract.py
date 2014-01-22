@@ -156,6 +156,7 @@ def stream(video, target, profile, info, avconv=None):
     cmd = [avconv, '-y', '-i', video, '-threads', '4'] \
           + audio_settings \
           + video_settings
+
     if format == 'webm':
         cmd += ['-f', 'webm', target]
     elif format == 'mp4':

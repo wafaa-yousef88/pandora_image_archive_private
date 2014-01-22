@@ -26,7 +26,7 @@ VIDEO_PREFIX = "//127.0.0.1"
 
 DEBUG = False
 #DEBUG = True
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 	
 #with apache x-sendfile or lighttpd set this to True
 #XSENDFILE = True

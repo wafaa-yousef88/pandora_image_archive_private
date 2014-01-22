@@ -194,6 +194,12 @@
             "find": true,
             "sort": true
         },
+				/*wafaa Not used till now*/
+        {
+            "id": "collection",
+            "title": "collection",
+            "type": "text"
+        },				
         {
             "id": "summary",
             "title": "Summary",

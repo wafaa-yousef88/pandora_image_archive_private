@@ -84,7 +84,9 @@ def recover_file(id, oshash, filename):
         if len(extension) > 1:
             extension = extension[-1]
         else:
-            extension = 'webm'
+            #wafaa
+            #extension = 'webm'
+            extension = 'png'
         file.info['extension'] = extension.lower()
         file.save()
     else:

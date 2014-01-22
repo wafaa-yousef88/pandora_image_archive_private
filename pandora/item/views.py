@@ -34,11 +34,6 @@ from user.models import has_capability
 from ox.django.api import actions
 
 
-#wafaa
-import logging
-logger = logging.getLogger(__name__)
-
-
 def _order_query(qs, sort, prefix='sort__'):
     order_by = []
     if len(sort) == 1:
@@ -893,8 +888,6 @@ def torrent(request, id, filename=None):
 def video(request, id, resolution, format, index=None):
     resolution = int(resolution)
     resolutions = sorted(settings.CONFIG['video']['resolutions'])
-    #wafaa
-    logger.error("I AM IN VIDEO")
     if resolution not in resolutions:
         raise Http404
     item = get_object_or_404(models.Item, itemId=id)
@@ -1120,8 +1113,8 @@ def oembed(request):
     item = get_object_or_404_json(models.Item, itemId=itemId)
     embed_url = request.build_absolute_uri('/%s' % itemId)
     if url.startswith(embed_url):
-        embed_url = '%s#embed' % url
-    else:
+        embed_url = url
+    if not '#embed' in embed_url:
         embed_url = '%s#embed' % embed_url
 
     oembed = {}
